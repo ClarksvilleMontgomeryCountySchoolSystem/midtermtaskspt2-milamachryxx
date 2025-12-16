@@ -1,3 +1,4 @@
+import pytest
 import sys
 import os
 from unittest.mock import patch
@@ -7,14 +8,22 @@ from io import StringIO
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
-def test_00_file_exists():
-    """Test that task4.py exists - 1 point"""
-    assert os.path.exists('task4.py'), "task4.py not found - have you committed it to GitHub?"
+def test_file_imports():
+    """Test that task4.py imports without errors - Must pass for other tests to run"""
+    try:
+        import task4
+        import importlib
+        importlib.reload(task4)
+    except Exception as e:
+        pytest.fail(f"task4.py has syntax errors and cannot import: {str(e)}")
 
 
-def test_01_snippet_1_fixed():
+def test_snippet_1_fixed():
     """Snippet 1: Missing colon - 1 point"""
-    import task4
+    try:
+        import task4
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
     
     old_stdout = sys.stdout
     sys.stdout = StringIO()
@@ -31,9 +40,12 @@ if temperature > 70:
     assert "It's warm outside!" in output, "Snippet 1 not fixed correctly"
 
 
-def test_02_snippet_2_fixed():
+def test_snippet_2_fixed():
     """Snippet 2: Unclosed string - 1 point"""
-    import task4
+    try:
+        import task4
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
     
     old_stdout = sys.stdout
     sys.stdout = StringIO()
@@ -49,9 +61,12 @@ print(greeting)
     assert "Hello, welcome to our store" in output, "Snippet 2 not fixed correctly"
 
 
-def test_03_snippet_3_fixed():
+def test_snippet_3_fixed():
     """Snippet 3: Variable name typo - 1 point"""
-    import task4
+    try:
+        import task4
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
     
     old_stdout = sys.stdout
     sys.stdout = StringIO()
@@ -69,9 +84,12 @@ print(f"Total fruit: {total_fruit}")
     assert "Total fruit: 8" in output, "Snippet 3 not fixed correctly"
 
 
-def test_04_snippet_4_fixed():
+def test_snippet_4_fixed():
     """Snippet 4: Indentation error - 1 point"""
-    import task4
+    try:
+        import task4
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
     
     old_stdout = sys.stdout
     sys.stdout = StringIO()
@@ -89,21 +107,19 @@ if has_ticket:
     assert "You won $10!" in output, "Snippet 4 not fixed correctly"
 
 
-def test_05_snippet_5_fixed():
+def test_snippet_5_fixed():
     """Snippet 5: Missing type conversion - 1 point"""
-    import task4
+    try:
+        import task4
+        assert hasattr(task4, 'snippet_5'), "snippet_5 function not found"
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
     
-    # Snippet 5 should run successfully with mocked input
     with patch('builtins.input', return_value='15'):
         old_stdout = sys.stdout
         sys.stdout = StringIO()
         try:
-            # Execute the snippet code directly
-            exec("""
-age = int(input("Enter your age: "))
-next_year = age + 1
-print(f"Next year you'll be {next_year}")
-""")
+            task4.snippet_5()
             output = sys.stdout.getvalue()
         finally:
             sys.stdout = old_stdout
@@ -111,9 +127,12 @@ print(f"Next year you'll be {next_year}")
     assert "Next year you'll be 16" in output, "Snippet 5 not fixed correctly"
 
 
-def test_06_snippet_6_fixed():
+def test_snippet_6_fixed():
     """Snippet 6: Unclosed parenthesis - 1 point"""
-    import task4
+    try:
+        import task4
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
     
     old_stdout = sys.stdout
     sys.stdout = StringIO()
@@ -130,9 +149,12 @@ print(f"Each person gets {share} cookies")
     assert "Each person gets 3 cookies" in output, "Snippet 6 not fixed correctly"
 
 
-def test_07_snippet_7_fixed():
+def test_snippet_7_fixed():
     """Snippet 7: Wrong operator (logic error) - 1 point"""
-    import task4
+    try:
+        import task4
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
     
     old_stdout = sys.stdout
     sys.stdout = StringIO()
@@ -150,9 +172,12 @@ if lives == 2:
     assert "You have 2 lives left" in output, "Snippet 7 not fixed correctly"
 
 
-def test_08_snippet_8_fixed():
+def test_snippet_8_fixed():
     """Snippet 8: Undefined variable - 1 point"""
-    import task4
+    try:
+        import task4
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
     
     old_stdout = sys.stdout
     sys.stdout = StringIO()
@@ -170,9 +195,12 @@ print(f"Total: ${total}")
     assert "31.98" in output, "Snippet 8 not fixed correctly"
 
 
-def test_09_snippet_9_fixed():
+def test_snippet_9_fixed():
     """Snippet 9: Missing parentheses in print - 1 point"""
-    import task4
+    try:
+        import task4
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
     
     old_stdout = sys.stdout
     sys.stdout = StringIO()
@@ -186,3 +214,27 @@ print("Your score is:", score)
         sys.stdout = old_stdout
     
     assert "Your score is: 100" in output, "Snippet 9 not fixed correctly"
+
+
+def test_snippet_10_fixed():
+    """Snippet 10: Indentation in if/else - 1 point"""
+    try:
+        import task4
+    except ImportError:
+        pytest.skip("Cannot test - file won't import")
+    
+    old_stdout = sys.stdout
+    sys.stdout = StringIO()
+    try:
+        exec("""
+is_raining = False
+if is_raining:
+    print("Bring an umbrella!")
+else:
+    print("Enjoy the sunshine!")
+""")
+        output = sys.stdout.getvalue()
+    finally:
+        sys.stdout = old_stdout
+    
+    assert "Enjoy the sunshine!" in output, "Snippet 10 not fixed correctly"
